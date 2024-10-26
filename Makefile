@@ -12,11 +12,9 @@ ifeq ($(LIB_TYPE), dynamic)
 	COMPILE_FLAGS += -fPIC
 endif
 # Header Folders
-HEADER_ROOT_FOLDER := eprocebar
-HEADER_FOLDERS := eprocebar/ eprocebar/procebar_style/
+HEADER_FOLDERS ?= 
 # Source Folders
-SOURCE_ROOT_FOLDER := eprocebar
-SOURCE_FOLDERS := eprocebar/ eprocebar/procebar_style/
+SOURCE_FOLDERS ?= 
 
 ### Build Options
 # Build Path
@@ -36,11 +34,11 @@ ALL_LIB_TYPE := static dynamic
 
 ### Files
 # Source Files
-SOURCE_FILES := $(wildcard $(patsubst %, %/*.c, $(SOURCE_FOLDERS)))
+SOURCE_FILES ?= $(wildcard $(patsubst %, %/*.c, $(SOURCE_FOLDERS)))
 
 # Object Files
 #OBJECT_FILES := $(patsubst %.c, $(OBJ_PATH)/%.o, $(notdir $(SOURCE_FILES)))
-OBJECT_FILES := $(patsubst $(SOURCE_ROOT_FOLDER)/%.c, $(OBJ_PATH)/%.o, $(SOURCE_FILES))
+OBJECT_FILES ?= $(patsubst %.c,$(OBJ_PATH)/%.o, $(SOURCE_FILES))
 
 ####################################################################################
 
@@ -70,12 +68,13 @@ endif
 
 ### Create Folders
 folder:
-	mkdir -p $(patsubst $(HEADER_ROOT_FOLDER)/%, $(HEADER_PATH)/%, $(HEADER_FOLDERS)) $(patsubst $(SOURCE_ROOT_FOLDER)/%, $(OBJ_PATH)/%, $(SOURCE_FOLDERS)) $(LIB_PATH)
-
+	mkdir -p $(patsubst %, $(HEADER_PATH)/%, $(HEADER_FOLDERS)) $(patsubst %, $(OBJ_PATH)/%, $(SOURCE_FOLDERS)) $(LIB_PATH)
+#             ^                                                 ^                                                ^ 
+#             Create folders for header files                   Create folders for object files                  Create folders for library file
 
 ### Copy Header Files
 header:
-	$(foreach folder, $(patsubst $(HEADER_ROOT_FOLDER)%, %, $(HEADER_FOLDERS)), cp $(HEADER_ROOT_FOLDER)/$(folder)*.h $(HEADER_PATH)/$(folder) && ) echo -n
+	$(foreach folder, $(HEADER_FOLDERS), cp $(folder)/*.h $(HEADER_PATH)/$(folder) && ) echo -n
 
 ### Build Library
 library: $(OBJECT_FILES)
@@ -98,3 +97,7 @@ clean:
 ifeq ($(OS), Linux)
 	rm -rf $(HEADER_PATH) $(OBJ_PATH) $(LIB_PATH)
 endif
+
+info:
+	@echo "Source files: $(SOURCE_FILES)"
+	@echo "Object files: $(OBJECT_FILES)"
