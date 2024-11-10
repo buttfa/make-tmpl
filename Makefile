@@ -1,22 +1,21 @@
 ### Compile Options
 # Compiler
-COMPILER ?= gcc
+COMPILER ?=
 # Compile Flags
 COMPILE_FLAGS ?= 
 # Linker 
 LINKER ?= $(COMPILER)
+# Linker Flags
 LINK_FLAGS ?=
 
-# If LIB_TYPE is dynamic, add -fPIC flag
-ifeq ($(LIB_TYPE), dynamic)
-	COMPILE_FLAGS += -fPIC
-endif
-# Header Folders
-HEADER_FOLDERS ?= 
-# Source Folders
-SOURCE_FOLDERS ?= 
 
 ### Build Options
+# Target Type
+TARGET_TYPE ?= 
+# Source Folders
+SOURCE_FOLDERS ?= 
+# Header Folders
+HEADER_FOLDERS ?= 
 # Build Path
 BUILD_PATH ?= build
 # Header Path
@@ -29,15 +28,26 @@ LIB_PATH ?= $(BUILD_PATH)/lib
 LIB_NAME ?= 
 # Library Type
 LIB_TYPE ?= 
+
+
+####################################################################################
+
+# All Target Type
+ALL_TARGET_TYPE := app lib
+
 # All Library Type
 ALL_LIB_TYPE := static dynamic
+
+# If LIB_TYPE is dynamic, add -fPIC flag
+ifeq ($(LIB_TYPE), dynamic)
+	COMPILE_FLAGS += -fPIC
+endif
 
 ### Files
 # Source Files
 SOURCE_FILES ?= $(wildcard $(patsubst %, %/*.c, $(SOURCE_FOLDERS)))
 
 # Object Files
-#OBJECT_FILES := $(patsubst %.c, $(OBJ_PATH)/%.o, $(notdir $(SOURCE_FILES)))
 OBJECT_FILES ?= $(patsubst %.c,$(OBJ_PATH)/%.o, $(SOURCE_FILES))
 
 ####################################################################################
@@ -75,28 +85,35 @@ folder:
 ### Copy Header Files
 header:
 	$(foreach folder, $(HEADER_FOLDERS), cp $(folder)/*.h $(HEADER_PATH)/$(folder) && ) echo -n
+#                                        ^
+#                                        Copy header files to header path
 
 ### Build Library
 library: $(OBJECT_FILES)
 ## Build Library
 ifeq ($(LIB_TYPE), static)
 	ar -rcs $(LIB_PATH)/$(LIB_NAME) $(OBJECT_FILES)
+#   ^
+#   Create static library
 endif
 ifeq ($(LIB_TYPE), dynamic)
 	$(COMPILER) -shared -o $(LIB_PATH)/$(LIB_NAME) $(OBJECT_FILES) $(LINK_FLAGS)
+#   ^
+#   Create dynamic library
 endif
 
 
 ### Compile Object Files
 $(OBJECT_FILES): %.o : $(filter $(patsubst %.o, \%/%.c, $(notdir %)), $(SOURCE_FILES))
 	$(COMPILER) -c $(filter $(patsubst %.o, \%/%.c, $(notdir $@)), $(SOURCE_FILES)) -o $@ $(patsubst %, -I%, $(HEADER_FOLDERS)) $(COMPILE_FLAGS)
+#   ^
+#   Compile object files
 
 ### Clean Build Files
-OS = $(shell uname | tr -d '\n')
 clean:
-ifeq ($(OS), Linux)
 	rm -rf $(HEADER_PATH) $(OBJ_PATH) $(LIB_PATH)
-endif
+#   ^
+#   Remove all build files on Linux
 
 info:
 	@echo "Source files: $(SOURCE_FILES)"
