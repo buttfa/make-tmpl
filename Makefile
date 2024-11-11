@@ -45,10 +45,10 @@ endif
 
 ### Files
 # Source Files
-SOURCE_FILES ?= $(wildcard $(patsubst %, %/*.c, $(SOURCE_FOLDERS)))
+SOURCE_FILES += $(wildcard $(patsubst %, %/*.c, $(SOURCE_FOLDERS)))
 
 # Object Files
-OBJECT_FILES ?= $(patsubst %.c,$(OBJ_PATH)/%.o, $(SOURCE_FILES))
+OBJECT_FILES += $(patsubst %.c,$(OBJ_PATH)/%.o, $(SOURCE_FILES))
 
 ####################################################################################
 
@@ -62,7 +62,27 @@ build: check folder header library
 
 ### Check Env
 check:
+## Check target type
+# Check if TARGET_TYPE is set
+ifndef TARGET_TYPE
+	$(error TARGET_TYPE is not set)
+endif
+# Check TARGET_TYPE
+ifeq ($(if $(filter $(TARGET_TYPE), $(ALL_TARGET_TYPE)),yes,no), no)
+	$(error TARGET_TYPE is not valid. Please set TARGET_TYPE to app or lib)
+endif
+
+## Check application information
+ifeq ($(TARGET_TYPE), app)
+#	Check if APP_NAME is set
+ifndef APP_NAME
+	$(error APP_NAME is not set)
+endif
+endif
+
+## Check library information
 # Check if LIB_TYPE is set
+ifeq ($(TARGET_TYPE), lib)
 ifndef LIB_TYPE
 	$(error LIB_TYPE is not set)
 endif
@@ -73,6 +93,7 @@ endif
 # Check if LIB_NAME is set
 ifndef LIB_NAME
 	$(error LIB_NAME is not set)
+endif
 endif
 
 
@@ -88,9 +109,15 @@ header:
 #                                        ^
 #                                        Copy header files to header path
 
+### Build Application
+application:
+ifeq ($(TARGET_TYPE), app)
+	$(LINKER) -o $(BUILD_PATH)/$(APP_NAME) $(OBJECT_FILES) $(LINK_FLAGS)
+endif
+
 ### Build Library
 library: $(OBJECT_FILES)
-## Build Library
+ifeq ($(TARGET_TYPE), lib)
 ifeq ($(LIB_TYPE), static)
 	ar -rcs $(LIB_PATH)/$(LIB_NAME) $(OBJECT_FILES)
 #   ^
@@ -100,6 +127,7 @@ ifeq ($(LIB_TYPE), dynamic)
 	$(COMPILER) -shared -o $(LIB_PATH)/$(LIB_NAME) $(OBJECT_FILES) $(LINK_FLAGS)
 #   ^
 #   Create dynamic library
+endif
 endif
 
 
@@ -111,7 +139,7 @@ $(OBJECT_FILES): %.o : $(filter $(patsubst %.o, \%/%.c, $(notdir %)), $(SOURCE_F
 
 ### Clean Build Files
 clean:
-	rm -rf $(HEADER_PATH) $(OBJ_PATH) $(LIB_PATH)
+	rm -rf $(BUILD_PATH) $(HEADER_PATH) $(OBJ_PATH) $(LIB_PATH)
 #   ^
 #   Remove all build files on Linux
 
