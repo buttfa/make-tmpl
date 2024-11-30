@@ -45,10 +45,10 @@ endif
 
 ### Files
 # Source Files
-SOURCE_FILES += $(wildcard $(patsubst %, %/*.c, $(SOURCE_FOLDERS)))
+SOURCE_FILES += $(wildcard $(patsubst %, %/*.c, $(SOURCE_FOLDERS))) $(wildcard $(patsubst %, %/*.cpp, $(SOURCE_FOLDERS)))
 
 # Object Files
-OBJECT_FILES += $(patsubst %.c,$(OBJ_PATH)/%.o, $(SOURCE_FILES))
+OBJECT_FILES += $(patsubst %.c,$(OBJ_PATH)/%.o, $(SOURCE_FILES)) $(patsubst %.cpp,$(OBJ_PATH)/%.o, $(SOURCE_FILES))
 
 ####################################################################################
 
@@ -133,7 +133,7 @@ endif
 
 ### Compile Object Files
 $(OBJECT_FILES): %.o : $(filter $(patsubst %.o, \%/%.c, $(notdir %)), $(SOURCE_FILES))
-	$(COMPILER) -c $(filter $(patsubst %.o, \%/%.c, $(notdir $@)), $(SOURCE_FILES)) -o $@ $(patsubst %, -I%, $(HEADER_FOLDERS)) $(COMPILE_FLAGS)
+	$(COMPILER) -c $(filter $(patsubst %.o, \%/%.c, $(notdir $@)), $(SOURCE_FILES)) $(filter $(patsubst %.o, \%/%.cpp, $(notdir $@)), $(SOURCE_FILES)) -o $@ $(patsubst %, -I%, $(HEADER_FOLDERS)) $(COMPILE_FLAGS)
 #   ^
 #   Compile object files
 
