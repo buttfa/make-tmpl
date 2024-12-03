@@ -32,6 +32,8 @@ LIB_PATH ?= $(BUILD_PATH)/lib
 LIB_NAME ?= 
 # Library Type
 LIB_TYPE ?= 
+# App path
+APP_PATH ?=
 
 
 ####################################################################################
@@ -137,7 +139,7 @@ endif
 ### Build Application
 application: $(OBJECT_FILES)
 ifeq ($(TARGET_TYPE), app)
-	$(LINKER) -o $(BUILD_PATH)/$(APP_NAME) $(OBJECT_FILES) $(LINK_FLAGS)
+	$(LINKER) -o $(APP_PATH)/$(APP_NAME) $(OBJECT_FILES) $(LINK_FLAGS)
 endif
 
 ### Build Library
