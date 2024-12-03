@@ -5,7 +5,7 @@ LANGUAGE=
 COMPILER=
 # Set Compile flags (Optional. And enclosed in single quotation marks.)
 COMPILE_FLAGS=
-# Set Linker (Optional, the default is the same as the compiler.)
+# Set Linker
 LINKER=
 # Set Linker flags (Optional. And enclosed in single quotation marks.)
 LINK_FLAGS=

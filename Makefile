@@ -6,7 +6,7 @@ COMPILER?=
 # Compile Flags
 COMPILE_FLAGS?=
 # Linker 
-LINKER?=$(COMPILER)
+LINKER?=
 # Linker Flags
 LINK_FLAGS?=
 
