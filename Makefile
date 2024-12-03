@@ -1,4 +1,6 @@
 ### Compile Options
+# Language
+LANGUAGE ?= c
 # Compiler
 COMPILER ?=
 # Compile Flags
@@ -13,7 +15,9 @@ LINK_FLAGS ?=
 # Target Type
 TARGET_TYPE ?= 
 # Source Folders
-SOURCE_FOLDERS ?= 
+SOURCE_FOLDERS ?=
+C_SOURCE_FILES ?=
+CPP_SOURCE_FILES ?=
 # Header Folders
 HEADER_FOLDERS ?= 
 # Build Path
@@ -32,6 +36,9 @@ LIB_TYPE ?=
 
 ####################################################################################
 
+# All Language Type
+ALL_LANGUAGE := c cpp
+
 # All Target Type
 ALL_TARGET_TYPE := app lib
 
@@ -45,10 +52,20 @@ endif
 
 ### Files
 # Source Files
-SOURCE_FILES += $(wildcard $(patsubst %, %/*.c, $(SOURCE_FOLDERS))) $(wildcard $(patsubst %, %/*.cpp, $(SOURCE_FOLDERS)))
+C_SOURCE_FILES += $(wildcard $(patsubst %, %/*.c, $(SOURCE_FOLDERS)))
+SOURCE_FILES += $(C_SOURCE_FILES)
+ifeq ($(LANGUAGE), cpp)
+    CPP_SOURCE_FILES += $(wildcard $(patsubst %, %/*.cpp, $(SOURCE_FOLDERS)))
+	SOURCE_FILES += $(CPP_SOURCE_FILES)
+endif
+
+
 
 # Object Files
-OBJECT_FILES += $(patsubst %.c,$(OBJ_PATH)/%.o, $(SOURCE_FILES)) $(patsubst %.cpp,$(OBJ_PATH)/%.o, $(SOURCE_FILES))
+OBJECT_FILES += $(patsubst %.c,$(OBJ_PATH)/%.o, $(C_SOURCE_FILES)) 
+ifeq ($(LANGUAGE), cpp)
+	OBJECT_FILES += $(patsubst %.cpp,$(OBJ_PATH)/%.o, $(CPP_SOURCE_FILES))
+endif
 
 ####################################################################################
 
@@ -57,7 +74,7 @@ OBJECT_FILES += $(patsubst %.c,$(OBJ_PATH)/%.o, $(SOURCE_FILES)) $(patsubst %.cp
 
 
 ### Build the library
-build: check folder header library
+build: check folder header library application
 
 
 ### Check Env
@@ -99,18 +116,26 @@ endif
 
 ### Create Folders
 folder:
-	mkdir -p $(patsubst %, $(HEADER_PATH)/%, $(HEADER_FOLDERS)) $(patsubst %, $(OBJ_PATH)/%, $(SOURCE_FOLDERS)) $(LIB_PATH)
-#             ^                                                 ^                                                ^ 
-#             Create folders for header files                   Create folders for object files                  Create folders for library file
+	mkdir -p $(BUILD_PATH) $(patsubst %, $(OBJ_PATH)/%, $(SOURCE_FOLDERS))
+#                          ^
+#                          Create folders for object files
+ifeq ($(TARGET_TYPE), lib)
+	mkdir -p $(patsubst %, $(HEADER_PATH)/%, $(HEADER_FOLDERS)) $(LIB_PATH)
+endif
+#             ^                                                 ^
+#             Create folders for header files                   Create folders for library file
 
 ### Copy Header Files
 header:
+ifeq  ($(TARGET_TYPE), lib)
 	$(foreach folder, $(HEADER_FOLDERS), cp $(folder)/*.h $(HEADER_PATH)/$(folder) && ) echo -n
+endif
 #                                        ^
 #                                        Copy header files to header path
 
+
 ### Build Application
-application:
+application: $(OBJECT_FILES)
 ifeq ($(TARGET_TYPE), app)
 	$(LINKER) -o $(BUILD_PATH)/$(APP_NAME) $(OBJECT_FILES) $(LINK_FLAGS)
 endif
@@ -132,8 +157,14 @@ endif
 
 
 ### Compile Object Files
-$(OBJECT_FILES): %.o : $(filter $(patsubst %.o, \%/%.c, $(notdir %)), $(SOURCE_FILES))
-	$(COMPILER) -c $(filter $(patsubst %.o, \%/%.c, $(notdir $@)), $(SOURCE_FILES)) $(filter $(patsubst %.o, \%/%.cpp, $(notdir $@)), $(SOURCE_FILES)) -o $@ $(patsubst %, -I%, $(HEADER_FOLDERS)) $(COMPILE_FLAGS)
+ifeq ($(LANGUAGE), c)
+$(OBJ_PATH)/%.o : %.c
+	$(COMPILER) -c $< -o $@ $(patsubst %, -I%, $(HEADER_FOLDERS)) $(COMPILE_FLAGS)
+endif
+ifeq ($(LANGUAGE), cpp)
+$(OBJ_PATH)/%.o : %.cpp
+	$(COMPILER) -c $< -o $@ $(patsubst %, -I%, $(HEADER_FOLDERS)) $(COMPILE_FLAGS)
+endif
 #   ^
 #   Compile object files
 
@@ -141,12 +172,12 @@ $(OBJECT_FILES): %.o : $(filter $(patsubst %.o, \%/%.c, $(notdir %)), $(SOURCE_F
 clean:
 	rm -rf $(BUILD_PATH) $(HEADER_PATH) $(OBJ_PATH) $(LIB_PATH)
 #   ^
-#   Remove all build files on Linux
+#   Remove all build files
 
 info:
 	@echo "Source files: $(SOURCE_FILES)"
 	@echo "Object files: $(OBJECT_FILES)"
 
+EXAMPLE_FOLDERS ?= example/c-math-lib example/cpp-math-lib 
 copy-to-example:
-	cp Makefile example/*/third_party/make-tmpl
-	cp Makefile example/*/third_party/*/third_party/make-tmpl
+	$(foreach folder, $(EXAMPLE_FOLDERS), cp Makefile $(folder)/third_party/make-tmpl && ) echo -n
