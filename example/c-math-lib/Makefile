@@ -1,10 +1,10 @@
-ARGS=LIB_NAME=libcmath.a  LIB_TYPE=static HEADER_FOLDERS='inc inc/calc' SOURCE_ROOT_FOLDER= SOURCE_FOLDERS='src/calc'
+PROJECT_ARGS=TARGET_TYPE=lib COMPILER=gcc LIB_NAME=libcmath.a LIB_TYPE=static HEADER_FOLDERS='inc inc/calc' SOURCE_FOLDERS='src/calc' -f third_party/make-tmpl/Makefile
 
 lib:
-	make $(ARGS) -f third_party/make-tmpl/Makefile
+	make $(PROJECT_ARGS)
 
 info:
-	make info $(ARGS) -f third_party/make-tmpl/Makefile
+	make info $(PROJECT_ARGS)
 
 clean:
-	make clean $(ARGS) -f third_party/make-tmpl/Makefile
+	make clean $(PROJECT_ARGS)
