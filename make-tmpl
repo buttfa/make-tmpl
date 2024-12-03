@@ -3,11 +3,11 @@
 LANGUAGE=
 # Set Compiler
 COMPILER=
-# Set Compile flags (Optional)
+# Set Compile flags (Optional. And enclosed in single quotation marks.)
 COMPILE_FLAGS=
 # Set Linker (Optional, the default is the same as the compiler.)
 LINKER=
-# Set Linker flags (Optional)
+# Set Linker flags (Optional. And enclosed in single quotation marks.)
 LINK_FLAGS=
 # Set Target type (lib or app)
 TARGET_TYPE=

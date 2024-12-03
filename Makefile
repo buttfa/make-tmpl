@@ -1,39 +1,39 @@
 ### Compile Options
 # Language
-LANGUAGE ?= c
+LANGUAGE?=c
 # Compiler
-COMPILER ?=
+COMPILER?=
 # Compile Flags
-COMPILE_FLAGS ?= 
+COMPILE_FLAGS?=
 # Linker 
-LINKER ?= $(COMPILER)
+LINKER?=$(COMPILER)
 # Linker Flags
-LINK_FLAGS ?=
+LINK_FLAGS?=
 
 
 ### Build Options
 # Target Type
-TARGET_TYPE ?= 
+TARGET_TYPE?=
 # Source Folders
-SOURCE_FOLDERS ?=
-C_SOURCE_FILES ?=
-CPP_SOURCE_FILES ?=
+SOURCE_FOLDERS?=
+C_SOURCE_FILES?=
+CPP_SOURCE_FILES?=
 # Header Folders
-HEADER_FOLDERS ?= 
+HEADER_FOLDERS?=
 # Build Path
-BUILD_PATH ?= build
+BUILD_PATH?=build
 # Header Path
-HEADER_PATH ?= $(BUILD_PATH)/inc
+HEADER_PATH?=$(BUILD_PATH)/inc
 # Object Path
-OBJ_PATH ?= $(BUILD_PATH)/obj
+OBJ_PATH?=$(BUILD_PATH)/obj
 # Library Path
-LIB_PATH ?= $(BUILD_PATH)/lib
+LIB_PATH?=$(BUILD_PATH)/lib
 # Library Name
-LIB_NAME ?= 
+LIB_NAME?=
 # Library Type
-LIB_TYPE ?= 
+LIB_TYPE?=
 # App path
-APP_PATH ?=
+APP_PATH?=
 
 
 ####################################################################################
@@ -180,6 +180,6 @@ info:
 	@echo "Source files: $(SOURCE_FILES)"
 	@echo "Object files: $(OBJECT_FILES)"
 
-EXAMPLE_FOLDERS ?= example/c-math-lib example/cpp-math-lib 
+EXAMPLE_FOLDERS:=example/c-math-lib example/cpp-math-lib 
 copy-to-example:
 	$(foreach folder, $(EXAMPLE_FOLDERS), cp Makefile $(folder)/third_party/make-tmpl && ) echo -n
