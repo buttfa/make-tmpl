@@ -159,10 +159,8 @@ endif
 
 
 ### Compile Object Files
-ifeq ($(LANGUAGE), c)
 $(OBJ_PATH)/%.o : %.c
 	$(COMPILER) -c $< -o $@ $(patsubst %, -I%, $(HEADER_FOLDERS)) $(COMPILE_FLAGS)
-endif
 ifeq ($(LANGUAGE), cpp)
 $(OBJ_PATH)/%.o : %.cpp
 	$(COMPILER) -c $< -o $@ $(patsubst %, -I%, $(HEADER_FOLDERS)) $(COMPILE_FLAGS)
