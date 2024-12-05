@@ -177,7 +177,3 @@ clean:
 info:
 	@echo "Source files: $(SOURCE_FILES)"
 	@echo "Object files: $(OBJECT_FILES)"
-
-EXAMPLE_FOLDERS:=example/c-math-lib example/cpp-math-lib 
-copy-to-example:
-	$(foreach folder, $(EXAMPLE_FOLDERS), cp Makefile $(folder)/third_party/make-tmpl && ) echo -n
