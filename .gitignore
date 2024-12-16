@@ -1,8 +1,2 @@
-# The compilation product of make-tmpl example project.
-example/*/build
-example/*/lib
-example/*/third_party/*/build
-example/*/third_party/*/lib
-
 # Editor directories and files
 .vscode

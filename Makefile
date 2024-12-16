@@ -9,6 +9,8 @@ COMPILE_FLAGS?=
 LINKER?=
 # Linker Flags
 LINK_FLAGS?=
+# Library Files
+LIBRARY_FILES?=
 
 
 ### Build Options
@@ -139,7 +141,7 @@ endif
 ### Build Application
 application: $(OBJECT_FILES)
 ifeq ($(TARGET_TYPE), app)
-	$(LINKER) -o $(APP_PATH)/$(APP_NAME) $(OBJECT_FILES) $(LINK_FLAGS)
+	$(LINKER) -o $(APP_PATH)/$(APP_NAME) $(OBJECT_FILES) $(LIBRARY_FILES) $(LINK_FLAGS)
 endif
 
 ### Build Library
@@ -151,7 +153,7 @@ ifeq ($(LIB_TYPE), static)
 #   Create static library
 endif
 ifeq ($(LIB_TYPE), dynamic)
-	$(COMPILER) -shared -o $(LIB_PATH)/$(LIB_NAME) $(OBJECT_FILES) $(LINK_FLAGS)
+	$(COMPILER) -shared -o $(LIB_PATH)/$(LIB_NAME) $(OBJECT_FILES) $(LIBRARY_FILES) $(LINK_FLAGS)
 #   ^
 #   Create dynamic library
 endif
