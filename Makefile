@@ -132,7 +132,7 @@ endif
 ### Copy Header Files
 header:
 ifeq  ($(TARGET_TYPE), lib)
-	$(foreach folder, $(HEADER_FOLDERS), cp $(folder)/*.h $(HEADER_PATH)/$(folder) 2>NUL || true && ) echo -n
+	$(foreach folder, $(HEADER_FOLDERS), cp $(folder)/*.h $(HEADER_PATH)/$(folder) 2>NULL || true && ) && rm -rf NULL
 endif
 #                                        ^
 #                                        Copy header files to header path
